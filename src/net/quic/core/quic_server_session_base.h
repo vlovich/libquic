@@ -57,7 +57,7 @@ class NET_EXPORT_PRIVATE QuicServerSessionBase : public QuicSpdySession {
 
     // Called before a packet is going to be processed by |session|.
     virtual void OnPacketBeingDispatchedToSession(
-        QuicServerSessionBase* session) = 0;
+        QuicSession* session) = 0;
   };
 
   // Does not take ownership of |connection|. |crypto_config| must outlive the
