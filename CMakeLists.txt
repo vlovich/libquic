@@ -210,13 +210,26 @@ elseif (${CMAKE_SYSTEM_NAME} MATCHES "Android")
 	set(
 		BASE_ARCH_SOURCES
 
+		src/third_party/ashmem/ashmem-dev.c
+
 		src/base/threading/platform_thread_linux.cc
 		src/base/threading/platform_thread_internal_posix.cc
 		src/base/threading/thread_local_android.cc
 		src/base/strings/sys_string_conversions_posix.cc
+		src/base/process/internal_linux.cc
 		src/base/process/process_handle_linux.cc
 		src/base/process/process_metrics_linux.cc
+		src/base/process/process_metrics_posix.cc
+		src/base/os_compat_android.cc
+		# src/base/files/file_util.cc
+		# src/base/files/file_util_posix.cc
+		# src/base/files/file_enumerator.cc
+		# src/base/files/file_enumerator_posix.cc
+		# src/base/base_paths_android.cc
+		# src/base/base_paths_posix.cc
 		src/base/memory/shared_memory_posix.cc
+		src/base/memory/shared_memory_android.cc
+		# src/base/path_service.cc
 		#src/base/sys_info_android.cc
 	)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
@@ -355,6 +368,7 @@ set(
 	src/base/files/file.cc
 	src/base/files/file_posix.cc
 	src/base/files/file_tracing.cc
+	src/base/files/file_util_io.cc
 	src/base/files/scoped_file.cc
 	src/base/files/memory_mapped_file.cc
 	src/base/files/memory_mapped_file_posix.cc

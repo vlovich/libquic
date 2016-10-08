@@ -140,15 +140,6 @@ BASE_EXPORT bool TextContentsEqual(const FilePath& filename1,
 // false on error.  For security reasons, a |path| containing path traversal
 // components ('..') is treated as a read error and |contents| is set to empty.
 // In case of I/O error, |contents| holds the data that could be read from the
-// file before the error occurred.
-// |contents| may be NULL, in which case this function is useful for its side
-// effect of priming the disk cache (could be used for unit tests).
-BASE_EXPORT bool ReadFileToString(const FilePath& path, std::string* contents);
-
-// Reads the file at |path| into |contents| and returns true on success and
-// false on error.  For security reasons, a |path| containing path traversal
-// components ('..') is treated as a read error and |contents| is set to empty.
-// In case of I/O error, |contents| holds the data that could be read from the
 // file before the error occurred.  When the file size exceeds |max_size|, the
 // function returns false with |contents| holding the file truncated to
 // |max_size|.
@@ -157,6 +148,19 @@ BASE_EXPORT bool ReadFileToString(const FilePath& path, std::string* contents);
 BASE_EXPORT bool ReadFileToStringWithMaxSize(const FilePath& path,
                                              std::string* contents,
                                              size_t max_size);
+
+// Reads the file at |path| into |contents| and returns true on success and
+// false on error.  For security reasons, a |path| containing path traversal
+// components ('..') is treated as a read error and |contents| is set to empty.
+// In case of I/O error, |contents| holds the data that could be read from the
+// file before the error occurred.
+// |contents| may be NULL, in which case this function is useful for its side
+// effect of priming the disk cache (could be used for unit tests).
+[[gnu::unused]]
+static bool ReadFileToString(const FilePath& path, std::string* contents) {
+  return ReadFileToStringWithMaxSize(
+    path, contents, std::numeric_limits<size_t>::max());
+}
 
 #if defined(OS_POSIX)
 

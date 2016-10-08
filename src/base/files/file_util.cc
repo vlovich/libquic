@@ -124,48 +124,6 @@ bool TextContentsEqual(const FilePath& filename1, const FilePath& filename2) {
 }
 #endif  // !defined(OS_NACL_NONSFI)
 
-bool ReadFileToStringWithMaxSize(const FilePath& path,
-                                 std::string* contents,
-                                 size_t max_size) {
-  if (contents)
-    contents->clear();
-  if (path.ReferencesParent())
-    return false;
-  FILE* file = OpenFile(path, "rb");
-  if (!file) {
-    return false;
-  }
-
-  const size_t kBufferSize = 1 << 16;
-  std::unique_ptr<char[]> buf(new char[kBufferSize]);
-  size_t len;
-  size_t size = 0;
-  bool read_status = true;
-
-  // Many files supplied in |path| have incorrect size (proc files etc).
-  // Hence, the file is read sequentially as opposed to a one-shot read.
-  while ((len = fread(buf.get(), 1, kBufferSize, file)) > 0) {
-    if (contents)
-      contents->append(buf.get(), std::min(len, max_size - size));
-
-    if ((max_size - size) < len) {
-      read_status = false;
-      break;
-    }
-
-    size += len;
-  }
-  read_status = read_status && !ferror(file);
-  CloseFile(file);
-
-  return read_status;
-}
-
-bool ReadFileToString(const FilePath& path, std::string* contents) {
-  return ReadFileToStringWithMaxSize(path, contents,
-                                     std::numeric_limits<size_t>::max());
-}
-
 #if !defined(OS_NACL_NONSFI)
 bool IsDirectoryEmpty(const FilePath& dir_path) {
   FileEnumerator files(dir_path, false,

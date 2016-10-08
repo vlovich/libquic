@@ -2,6 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(OS_ANDROID)
+#ifndef ENABLE_ANDROID_URI_SUPPORT
+#define ENABLE_ANDROID_URI_SUPPORT 0
+#endif
+#else
+#define ENABLE_ANDROID_URI_SUPPORT 0
+#endif
+
 #include "base/files/file_util.h"
 
 #include <dirent.h>
@@ -47,7 +55,7 @@
 #include "base/mac/foundation_util.h"
 #endif
 
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
 #include "base/android/content_uri_utils.h"
 #include "base/os_compat_android.h"
 #endif
@@ -364,7 +372,7 @@ bool SetNonBlocking(int fd) {
 
 bool PathExists(const FilePath& path) {
   ThreadRestrictions::AssertIOAllowed();
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
   if (path.IsContentUri()) {
     return ContentUriExists(path);
   }
@@ -483,7 +491,7 @@ bool GetTempDir(FilePath* path) {
   if (tmp) {
     *path = FilePath(tmp);
   } else {
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
     return PathService::Get(base::DIR_CACHE, path);
 #else
     *path = FilePath("/tmp");
@@ -655,19 +663,19 @@ bool IsLink(const FilePath& file_path) {
 
 bool GetFileInfo(const FilePath& file_path, File::Info* results) {
   stat_wrapper_t file_info;
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
   if (file_path.IsContentUri()) {
     File file = OpenContentUriForRead(file_path);
     if (!file.IsValid())
       return false;
     return file.GetInfo(results);
   } else {
-#endif  // defined(OS_ANDROID)
+#endif  // ENABLE_ANDROID_URI_SUPPORT
     if (CallStat(file_path.value().c_str(), &file_info) != 0)
       return false;
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
   }
-#endif  // defined(OS_ANDROID)
+#endif  // ENABLE_ANDROID_URI_SUPPORT
 
   results->FromStat(file_info);
   return true;
@@ -876,7 +884,7 @@ bool GetShmemTempDir(bool executable, FilePath* path) {
 bool CopyFile(const FilePath& from_path, const FilePath& to_path) {
   ThreadRestrictions::AssertIOAllowed();
   File infile;
-#if defined(OS_ANDROID)
+#if ENABLE_ANDROID_URI_SUPPORT
   if (from_path.IsContentUri()) {
     infile = OpenContentUriForRead(from_path);
   } else {

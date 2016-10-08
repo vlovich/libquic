@@ -18,6 +18,9 @@ ProcessId GetParentProcessId(ProcessHandle process) {
 }
 
 FilePath GetProcessExecutablePath(ProcessHandle process) {
+#if defined(OS_ANDROID)
+  return FilePath();
+#else
   FilePath stat_file = internal::GetProcPidDir(process).Append("exe");
   FilePath exe_name;
   if (!ReadSymbolicLink(stat_file, &exe_name)) {
@@ -25,6 +28,7 @@ FilePath GetProcessExecutablePath(ProcessHandle process) {
     return FilePath();
   }
   return exe_name;
+#endif
 }
 
 }  // namespace base

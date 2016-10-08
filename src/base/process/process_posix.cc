@@ -182,9 +182,9 @@ static bool WaitForSingleNonChildProcess(base::ProcessHandle handle,
 }
 #endif  // OS_MACOSX
 
-bool WaitForExitWithTimeoutImpl(base::ProcessHandle handle,
-                                int* exit_code,
-                                base::TimeDelta timeout) {
+static bool WaitForExitWithTimeoutImpl(base::ProcessHandle handle,
+                                       int* exit_code,
+                                       base::TimeDelta timeout) {
   base::ProcessHandle parent_pid = base::GetParentProcessId(handle);
   base::ProcessHandle our_pid = base::GetCurrentProcessHandle();
   if (parent_pid != our_pid) {
